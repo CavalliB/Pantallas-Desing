@@ -20,6 +20,12 @@ const NAVIGATION: Navigation = [
     icon: <PersonIcon />,
     pattern: 'employees{/:employeeId}*',
   },
+  {
+    segment:'Products',
+    title:'Products',
+    icon:<PersonIcon/>,
+    pattern: 'products{/:productId}*',
+  },
 ];
 
 const BRANDING = {

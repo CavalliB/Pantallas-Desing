@@ -5,7 +5,7 @@ import { PageContainer } from '@toolpad/core/PageContainer';
 export default function DashboardPage() {
   return (
     <PageContainer>
-      <Typography>Welcome to Toolpad!</Typography>
+      <Typography>Welcome to IceCream Design</Typography>
     </PageContainer>
   );
 }
