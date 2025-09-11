@@ -5,6 +5,7 @@ import App from './App';
 import Layout from './layouts/dashboard';
 import DashboardPage from './pages';
 import EmployeesCrudPage from './pages/employees';
+import ProductsCrudPage from './pages/products';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
             path: 'employees/:employeeId?/*',
             Component: EmployeesCrudPage,
           },
+          {
+            path: 'products/:productId?/*',
+            Component: ProductsCrudPage,
+          }
         ],
       },
     ],

@@ -21,7 +21,7 @@ const NAVIGATION: Navigation = [
     pattern: 'employees{/:employeeId}*',
   },
   {
-    segment:'Products',
+    segment:'products',
     title:'Products',
     icon:<PersonIcon/>,
     pattern: 'products{/:productId}*',
@@ -29,7 +29,7 @@ const NAVIGATION: Navigation = [
 ];
 
 const BRANDING = {
-  title: 'My Toolpad Core App',
+  title: 'My IceCream App',
 };
 
 export default function App() {
