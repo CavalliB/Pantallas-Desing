@@ -2,7 +2,7 @@ import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
 
 // Tipos de categoría de producto
-type ProductCategory = 'Electronics' | 'Clothing' | 'Food';
+type ProductCategory = 'IceCream' | 'Desserts' | 'Others';
 
 export interface Product extends DataModel {
   id: number;
@@ -15,28 +15,28 @@ export interface Product extends DataModel {
 const INITIAL_PRODUCTS_STORE: Product[] = [
   {
     id: 1,
-    name: 'Smartphone',
-    price: 699,
-    category: 'Electronics',
+    name: 'Dulce de Leche',
+    price: 0,
+    category: 'IceCream',
     stock: 50,
   },
   {
     id: 2,
-    name: 'Jeans',
+    name: 'ChocoChoco Cake',
     price: 49,
-    category: 'Clothing',
+    category: 'Desserts',
     stock: 120,
   },
   {
     id: 3,
-    name: 'Chocolate Bar',
+    name: 'Spoon',
     price: 2,
-    category: 'Food',
+    category: 'Others',
     stock: 500,
   },
 ];
 
-const getProductsStore = (): Product[] => {
+export const getProductsStore = (): Product[] => {
   const value = localStorage.getItem('products-store');
   return value ? JSON.parse(value) : INITIAL_PRODUCTS_STORE;
 };

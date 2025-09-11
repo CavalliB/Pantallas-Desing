@@ -6,6 +6,7 @@ import Layout from './layouts/dashboard';
 import DashboardPage from './pages';
 import EmployeesCrudPage from './pages/employees';
 import ProductsCrudPage from './pages/products';
+import ProductionOrdersCrudPage from './pages/productionOrders';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
           {
             path: 'products/:productId?/*',
             Component: ProductsCrudPage,
+          },
+          {
+            path: 'production-orders/:orderId?/*',
+            Component: ProductionOrdersCrudPage,
           }
         ],
       },

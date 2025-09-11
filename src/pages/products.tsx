@@ -15,7 +15,7 @@ export default function ProductsCrudPage() {
             defaultValues={{
                 name: 'New Product',       // Nombre por defecto
                 price: 0,                  // Precio por defecto
-                category: 'Electronics',   // Categoría por defecto (debe ser válida)
+                category: 'Desserts',   // Categoría por defecto (debe ser válida)
                 stock: 0,                  // Stock por defecto
             }}
             pageTitles={{
