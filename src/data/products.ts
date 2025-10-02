@@ -54,9 +54,10 @@ export const productsDataSource: DataSource<Product> = {
       field: 'category',
       headerName: 'Category',
       type: 'singleSelect',
-      valueOptions: ['Electronics', 'Clothing', 'Food'],
+      valueOptions: ['IceCream', 'Desserts', 'Others'], // ✔ ahora coincide
       width: 160,
     },
+
     { field: 'stock', headerName: 'Stock', type: 'number' },
   ],
   getMany: async ({ paginationModel, filterModel, sortModel }) => {
@@ -167,9 +168,10 @@ export const productsDataSource: DataSource<Product> = {
   validate: z.object({
     name: z.string().nonempty('Name is required'),
     price: z.number().min(0, 'Price must be at least 0'),
-    category: z.enum(['Electronics', 'Clothing', 'Food'], {
-      errorMap: () => ({ message: 'Category must be Electronics, Clothing or Food' }),
+    category: z.enum(['IceCream', 'Desserts', 'Others'], {
+      errorMap: () => ({ message: 'Category must be IceCream, Desserts or Others' }),
     }),
+
     stock: z.number().min(0, 'Stock must be at least 0'),
   })['~standard'].validate,
 };

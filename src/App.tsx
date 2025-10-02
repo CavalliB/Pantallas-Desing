@@ -32,6 +32,12 @@ const NAVIGATION: Navigation = [
     icon:<PersonIcon/>,
     pattern: 'production-orders{/:orderId}*',
   },
+  {
+    segment:'supplies',
+    title:'Supplies',
+    icon:<PersonIcon/>,
+    pattern: 'supplies{/:suppliesId}*',
+  },
 ];
 
 const BRANDING = {
