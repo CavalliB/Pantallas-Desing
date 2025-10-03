@@ -8,6 +8,7 @@ import EmployeesCrudPage from './pages/employees';
 import ProductsCrudPage from './pages/products';
 import ProductionOrdersCrudPage from './pages/productionOrders';
 import SuppliesCrudPage from './pages/supplies';
+import RecipesCrudPage from './pages/recipes';
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,12 @@ const router = createBrowserRouter([
           {
             path: 'supplies/:suppliesId?/*',
             Component: SuppliesCrudPage,
+          },
+          {
+            path: 'recipes/:recipesId?/*',
+            Component: RecipesCrudPage,
           }
+
         ],
       },
     ],

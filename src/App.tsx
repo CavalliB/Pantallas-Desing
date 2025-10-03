@@ -1,6 +1,9 @@
 import * as React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
+import IcecreamIcon from '@mui/icons-material/Icecream';
+import BlenderIcon from '@mui/icons-material/Blender';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { Outlet } from 'react-router';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import type { Navigation } from '@toolpad/core/AppProvider';
@@ -23,19 +26,19 @@ const NAVIGATION: Navigation = [
   {
     segment:'products',
     title:'Products',
-    icon:<PersonIcon/>,
+    icon:<IcecreamIcon/>,
     pattern: 'products{/:productId}*',
   },
   {
     segment:'production-orders',
     title:'Production Orders',
-    icon:<PersonIcon/>,
+    icon:<BlenderIcon/>,
     pattern: 'production-orders{/:orderId}*',
   },
   {
     segment:'supplies',
     title:'Supplies',
-    icon:<PersonIcon/>,
+    icon:<InventoryIcon/>,
     pattern: 'supplies{/:suppliesId}*',
   },
 ];
