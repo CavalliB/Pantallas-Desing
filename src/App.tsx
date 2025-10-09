@@ -24,22 +24,28 @@ const NAVIGATION: Navigation = [
     pattern: 'supplier{/:supplierID}*',
   },
   {
-    segment:'products',
-    title:'Products',
-    icon:<IcecreamIcon/>,
+    segment: 'products',
+    title: 'Products',
+    icon: <IcecreamIcon />,
     pattern: 'products{/:productId}*',
   },
   {
-    segment:'production-orders',
-    title:'Production Orders',
-    icon:<BlenderIcon/>,
+    segment: 'production-orders',
+    title: 'Production Orders',
+    icon: <BlenderIcon />,
     pattern: 'production-orders{/:orderId}*',
   },
   {
-    segment:'supplies',
-    title:'Supplies',
-    icon:<InventoryIcon/>,
+    segment: 'supplies',
+    title: 'Supplies',
+    icon: <InventoryIcon />,
     pattern: 'supplies{/:suppliesId}*',
+  },
+  {
+    segment: 'buyOrders',
+    title: 'Buy Order',
+    icon: <InventoryIcon />,
+    pattern: 'buyOrders{/:buyOrdersId}*',
   },
 ];
 

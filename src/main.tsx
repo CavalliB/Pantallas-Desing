@@ -9,6 +9,7 @@ import ProductsCrudPage from './pages/products';
 import ProductionOrdersCrudPage from './pages/productionOrders';
 import SuppliesCrudPage from './pages/supplies';
 import RecipesCrudPage from './pages/recipes';
+import buyOrdersCrudPage from './pages/buyOrders';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: 'recipes/:recipesId?/*',
             Component: RecipesCrudPage,
+          },
+          {
+            path: 'buyOrders/:buyOrdersId?/*',
+            Component: buyOrdersCrudPage,
           }
 
         ],

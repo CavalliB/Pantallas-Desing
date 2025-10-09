@@ -7,12 +7,13 @@ export interface Supplier extends DataModel {
   id: number;
   name: string;
   role: SupplierRole;
+  Email: string;
 }
 
 const INITIAL_SUPPLIERS_STORE: Supplier[] = [
-  { id: 1, name: 'Edward Perry', role: 'product' },
-  { id: 2, name: 'Josephine Drake', role: 'supplies' },
-  { id: 3, name: 'Cody Phillips', role: 'others' },
+  { id: 1, name: 'Edward Perry', role: 'product', Email: 'hola@gmail.com'},
+  { id: 2, name: 'Josephine Drake', role: 'supplies', Email: 'hola@gmail.com' },
+  { id: 3, name: 'Cody Phillips', role: 'others', Email: 'hola@gmail.com' },
 ];
 
 const getSuppliersStore = (): Supplier[] => {
@@ -35,6 +36,7 @@ export const suppliersDataSource: DataSource<Supplier> = {
       valueOptions: ['product', 'supplies', 'others'],
       width: 140,
     },
+    { field: 'Email', headerName: 'Email', width: 200 },
   ],
 
   getMany: async ({ paginationModel }) => {
