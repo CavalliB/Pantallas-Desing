@@ -32,11 +32,12 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'idBuyOrder', headerName: 'BuyOrder ID', width: 100 },
         {
-            field: "date", headerName: "date", type: "dateTime", width: 200, valueGetter: (params: any) => {
-                if (!params || !params.row || !params.row.createdAt) return null; // evita error
-                return new Date(params.row.createdAt);
-            },
-        }, 
+      field: 'date',
+      headerName: 'date',
+      type: 'dateTime',
+      valueGetter: (value: string) => value && new Date(value),
+      editable: false,
+    }, 
         { field: 'total', headerName: 'Total', type: 'number', width: 100 },
         {
             field: 'status',

@@ -47,10 +47,13 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
       valueOptions: ["Pending", "InProgress", "Completed"],
       width: 160,
     },
-    { field: "createdAt", headerName: "Created At", type: "dateTime", width: 200,valueGetter: (params: any) => {
-    if (!params || !params.row || !params.row.createdAt) return null; // evita error
-    return new Date(params.row.createdAt);
-  },},
+    {
+      field: 'createdAt',
+      headerName: 'Created at',
+      type: 'dateTime',
+      valueGetter: (value: string) => value && new Date(value),
+      editable: false,
+    },
   ],
 
   getMany: async ({ paginationModel }) => {
