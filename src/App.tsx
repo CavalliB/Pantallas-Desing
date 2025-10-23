@@ -10,47 +10,43 @@ import type { Navigation } from '@toolpad/core/AppProvider';
 
 const NAVIGATION: Navigation = [
   {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
   {
     segment: 'supplier',
-    title: 'Supplier',
+    title: 'Proveedor',
     icon: <PersonIcon />,
     pattern: 'supplier{/:supplierID}*',
   },
   {
-    segment: 'products',
-    title: 'Products',
+    segment: 'Products',
+    title: 'Productos',
     icon: <IcecreamIcon />,
     pattern: 'products{/:productId}*',
   },
   {
     segment: 'production-orders',
-    title: 'Production Orders',
+    title: 'Ordenes de Producción',
     icon: <BlenderIcon />,
     pattern: 'production-orders{/:orderId}*',
   },
   {
     segment: 'supplies',
-    title: 'Supplies',
+    title: 'Insumos',
     icon: <InventoryIcon />,
     pattern: 'supplies{/:suppliesId}*',
   },
   {
     segment: 'buyOrders',
-    title: 'Buy Order',
+    title: 'Ordenes de Compra',
     icon: <InventoryIcon />,
     pattern: 'buyOrders{/:buyOrdersId}*',
   },
 ];
 
 const BRANDING = {
-  title: 'My IceCream App',
+  title: 'Heladeria',
 };
 
 export default function App() {

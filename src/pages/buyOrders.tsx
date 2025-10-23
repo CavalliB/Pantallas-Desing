@@ -12,7 +12,7 @@ export default function BuyOrdersCrudPage() {
             dataSourceCache={buyOrderCache}
             rootPath="/buyOrders"
             initialPageSize={25}
-            defaultValues={{ itemCount: 1 }}
+            defaultValues={{ itemCount: 1, items: [], status: 'pending' }}
             pageTitles={{
                 show: `BuyOrders ${buyOrdersId}`,
                 create: "New Supplies",
