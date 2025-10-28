@@ -14,9 +14,9 @@ export default function SupplierCrudPage() {
       initialPageSize={25}
       defaultValues={{ itemCount: 1 }}
       pageTitles={{
-        show: `Supplier ${supplierId}`,
-        create: 'New Supplier',
-        edit: `Supplier ${supplierId} - Edit`,
+        show: `Proveedor ${supplierId}`,
+        create: 'Nuevo Proveedor',
+        edit: `Proveedor ${supplierId} - Editar`,
       }}
     />
   );

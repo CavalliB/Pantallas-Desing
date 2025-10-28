@@ -78,7 +78,6 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
     ],
 
     getMany: async ({ paginationModel }) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         const store = getBuyOrdersStore();
 
         const start = paginationModel.page * paginationModel.pageSize;
@@ -89,7 +88,6 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
         };
     },
     getOne: async (id) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         const buyOrder = getBuyOrdersStore().find((s) => s.id === Number(id));
         if (!buyOrder) throw new Error('BuyOrder not found');
         return buyOrder;
@@ -112,7 +110,6 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
     },
 
     updateOne: async (id, data) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         let updated: BuyOrder | null = null;
         const store = getBuyOrdersStore().map((s) => {
             if (s.id === Number(id)) {
@@ -138,7 +135,6 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
 
 
     deleteOne: async (id) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         const store = getBuyOrdersStore().filter((s) => s.id !== Number(id));
         setBuyOrdersStore(store);
     },

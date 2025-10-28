@@ -1,7 +1,7 @@
 import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
 
-type SupplierRole = 'product' | 'supplies' | 'others';
+type SupplierRole = 'producto' | 'insumos' | 'otros';
 
 export interface Supplier extends DataModel {
   id: number;
@@ -11,9 +11,9 @@ export interface Supplier extends DataModel {
 }
 
 const INITIAL_SUPPLIERS_STORE: Supplier[] = [
-  { id: 1, name: 'Edward Perry', role: 'product', Email: 'hola@gmail.com'},
-  { id: 2, name: 'Josephine Drake', role: 'supplies', Email: 'hola@gmail.com' },
-  { id: 3, name: 'Cody Phillips', role: 'others', Email: 'hola@gmail.com' },
+  { id: 1, name: 'Edward Perry', role: 'producto', Email: 'hola@gmail.com'},
+  { id: 2, name: 'Josephine Drake', role: 'insumos', Email: 'hola@gmail.com' },
+  { id: 3, name: 'Cody Phillips', role: 'otros', Email: 'hola@gmail.com' },
 ];
 
 const getSuppliersStore = (): Supplier[] => {
@@ -31,16 +31,15 @@ export const suppliersDataSource: DataSource<Supplier> = {
     { field: 'name', headerName: 'Nombre', width: 180 },
     {
       field: 'role',
-      headerName: 'Rol',
+      headerName: 'Categoria',
       type: 'singleSelect',
-      valueOptions: ['product', 'supplies', 'others'],
+      valueOptions: ['producto', 'insumos', 'otros'],
       width: 140,
     },
     { field: 'Email', headerName: 'Email', width: 200 },
   ],
 
   getMany: async ({ paginationModel }) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     const store = getSuppliersStore();
 
     const start = paginationModel.page * paginationModel.pageSize;
@@ -52,14 +51,12 @@ export const suppliersDataSource: DataSource<Supplier> = {
   },
 
   getOne: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     const supplier = getSuppliersStore().find((s) => s.id === Number(id));
-    if (!supplier) throw new Error('Supplier not found');
+    if (!supplier) throw new Error('Proveedor no encontrado');
     return supplier;
   },
 
   createOne: async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     const store = getSuppliersStore();
     const newSupplier = { id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1, ...data } as Supplier;
     setSuppliersStore([...store, newSupplier]);
@@ -67,7 +64,6 @@ export const suppliersDataSource: DataSource<Supplier> = {
   },
 
   updateOne: async (id, data) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     let updated: Supplier | null = null;
     const store = getSuppliersStore().map((s) => {
       if (s.id === Number(id)) {
@@ -77,19 +73,18 @@ export const suppliersDataSource: DataSource<Supplier> = {
       return s;
     });
     setSuppliersStore(store);
-    if (!updated) throw new Error('Supplier not found');
+    if (!updated) throw new Error('Proveedor no encontrado');
     return updated;
   },
 
   deleteOne: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
     const store = getSuppliersStore().filter((s) => s.id !== Number(id));
     setSuppliersStore(store);
   },
 
   validate: z.object({
     name: z.string().nonempty('Nombre es obligatorio'),
-    role: z.enum(['product', 'supplies', 'others']),
+    role: z.enum(['producto', 'insumos', 'otros']),
   })['~standard'].validate,
 };
 

@@ -115,7 +115,6 @@ export const productsDataSource: DataSource<Product> = {
     };
   },
   getOne: async (productId) => {
-    await new Promise((resolve) => setTimeout(resolve, 750));
 
     const productsStore = getProductsStore();
     const productToShow = productsStore.find((p) => p.id === Number(productId));
@@ -123,7 +122,6 @@ export const productsDataSource: DataSource<Product> = {
     return productToShow;
   },
   createOne: async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 750));
 
     const productsStore = getProductsStore();
     // Validar que los campos requeridos estén presentes
@@ -142,7 +140,6 @@ export const productsDataSource: DataSource<Product> = {
     return newProduct;
   },
   updateOne: async (productId, data) => {
-    await new Promise((resolve) => setTimeout(resolve, 750));
 
     const productsStore = getProductsStore();
     let updatedProduct: Product | null = null;
@@ -161,7 +158,6 @@ export const productsDataSource: DataSource<Product> = {
     return updatedProduct;
   },
   deleteOne: async (productId) => {
-    await new Promise((resolve) => setTimeout(resolve, 750));
     const productsStore = getProductsStore();
     setProductsStore(productsStore.filter((p) => p.id !== Number(productId)));
   },
