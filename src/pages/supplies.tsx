@@ -13,14 +13,14 @@ export default function SuppliesCrudPage() {
       rootPath="/supplies"
       initialPageSize={25}
       defaultValues={{
-        name: "New Supplies",
-        quantity: 0,
-        unit: "units",
+        nombre: "Nuevo Insumo",
+        cantidad: 0,
+        unidad: "unidades",
       }}
       pageTitles={{
-        show: `Supplies ${suppliesId}`,
-        create: "New Supplies",
-        edit: `Supplies ${suppliesId} - Edit`,
+        show: `Insumos ${suppliesId}`,
+        create: "Nuevo Insumo",
+        edit: `Insumos ${suppliesId} - Editar`,
       }}
     />
   );

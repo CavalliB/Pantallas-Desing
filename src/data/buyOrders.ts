@@ -1,12 +1,11 @@
 import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
 
-type OrderBuyStatus = 'pending' | 'complete' | 'canceled';
+type OrderBuyStatus = 'pendiente' | 'finalizado' | 'cancelado';
 
 
 export interface BuyOrder extends DataModel {
     id: number;
-    idBuyOrder: number;
     date: string;
     total: number;
     status: OrderBuyStatus;
@@ -22,10 +21,9 @@ export interface BuyOrder extends DataModel {
 const INITIAL_BUY_ORDERS_STORE: BuyOrder[] = [
     {
         id: 1,
-        idBuyOrder: 1,
         date: new Date().toISOString(),
         total: 150.0,
-        status: 'pending',
+        status: 'pendiente',
         items: [
             { id: 1, productName: 'Harina', quantity: 10, price: 20 },
             { id: 2, productName: 'Azúcar', quantity: 5, price: 10 },
@@ -33,20 +31,18 @@ const INITIAL_BUY_ORDERS_STORE: BuyOrder[] = [
     },
     {
         id: 2,
-        idBuyOrder: 2,
         date: new Date().toISOString(),
         total: 200.0,
-        status: 'complete',
+        status: 'finalizado',
         items: [
             { id: 1, productName: 'Leche', quantity: 20, price: 5 },
         ],
     },
     {
         id: 3,
-        idBuyOrder: 3,
         date: new Date().toISOString(),
         total: 100.0,
-        status: 'canceled',
+        status: 'cancelado',
         items: [],
     },
 ];
@@ -63,33 +59,22 @@ const setBuyOrdersStore = (value: BuyOrder[]) => {
 export const buyOrdersDataSource: DataSource<BuyOrder> = {
     fields: [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'idBuyOrder', headerName: 'BuyOrder ID', width: 100 },
         {
-      field: 'date',
-      headerName: 'date',
-      type: 'dateTime',
-      valueGetter: (value: string) => value && new Date(value),
-      editable: false,
-    }, 
+            field: 'date',
+            headerName: 'date',
+            type: 'dateTime',
+            valueGetter: (value: string) => value && new Date(value),
+            editable: false,
+        },
         { field: 'total', headerName: 'Total', type: 'number', width: 100 },
         {
             field: 'status',
             headerName: 'Status',
             type: 'singleSelect',
-            valueOptions: ['pending', 'complete', 'canceled'],
+            valueOptions: ['pendiente', 'finalizado', 'cancelado'],
             width: 130,
         },
-        {
-            field: 'items',
-            headerName: 'Insumos',
-            width: 400,
-            // Mostrar una representación legible de la sublista en las vistas
-            valueGetter: (items: any[]) =>
-                items && Array.isArray(items)
-                    ? items.map((it: any) => `${it.productName} x${it.quantity}`).join(', ')
-                    : '',
-            editable: false,
-        },
+
     ],
 
     getMany: async ({ paginationModel }) => {
@@ -111,17 +96,17 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
     },
 
     createOne: async (data) => {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         const store = getBuyOrdersStore();
-        // Normalizar items: asegurarnos de que sea un array y que cada item tenga id
-        const incomingItems = Array.isArray((data as any).items) ? (data as any).items : [];
-        const normalizedItems = incomingItems.map((it: any, idx: number) => ({ id: it.id ?? idx + 1, ...it }));
+        const newId = store.reduce((max, s) => Math.max(max, s.id), 0) + 1;
 
-        const newBuyOrder = {
-            id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1,
-            ...data,
-            items: normalizedItems,
-        } as BuyOrder;
+        const newBuyOrder: BuyOrder = {
+            id: newId,
+            date: data.date ?? new Date().toISOString(),
+            total: data.total ?? 0,
+            status: data.status ?? 'pendiente',
+            items: Array.isArray((data as any).items) ? (data as any).items : [],
+        };
+
         setBuyOrdersStore([...store, newBuyOrder]);
         return newBuyOrder;
     },
@@ -131,13 +116,17 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
         let updated: BuyOrder | null = null;
         const store = getBuyOrdersStore().map((s) => {
             if (s.id === Number(id)) {
-                // Si se envían items en la actualización, normalizarlos
-                const incomingItems = Array.isArray((data as any).items) ? (data as any).items : undefined;
-                const normalizedItems = Array.isArray(incomingItems)
-                    ? incomingItems.map((it: any, idx: number) => ({ id: it.id ?? idx + 1, ...it }))
+                const items = Array.isArray((data as any).items)
+                    ? data.items
                     : s.items ?? [];
 
-                updated = { ...s, ...data, items: normalizedItems };
+                updated = {
+                    ...s,
+                    date: data.date ?? s.date,
+                    total: data.total ?? s.total,
+                    status: data.status ?? s.status,
+                    items,
+                };
                 return updated;
             }
             return s;
@@ -147,19 +136,18 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
         return updated;
     },
 
+
     deleteOne: async (id) => {
         await new Promise((resolve) => setTimeout(resolve, 500));
         const store = getBuyOrdersStore().filter((s) => s.id !== Number(id));
         setBuyOrdersStore(store);
     },
 
-    // Validación con zod para que el CRUD genere formularios correctos
     validate: z
         .object({
-            idBuyOrder: z.number().optional(),
             date: z.string().optional(),
             total: z.number().optional(),
-            status: z.enum(['pending', 'complete', 'canceled']).default('pending'),
+            status: z.enum(['pendiente', 'finalizado', 'cancelado']).default('pendiente'),
             items: z
                 .array(
                     z.object({
@@ -171,7 +159,7 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
                 )
                 .default([]),
         })
-        ["~standard"].validate,
+    ["~standard"].validate,
 };
 
 export const buyOrderCache = new DataSourceCache();

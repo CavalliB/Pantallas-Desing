@@ -3,16 +3,16 @@ import { z } from "zod";
 
 export interface Supplies extends DataModel {
   id: number;
-  name: string;
-  quantity: number;
-  unit: string; // kg, litros, cajas, etc.
+  nombre: string;
+  cantidad: number;
+  unidad: string; // kg, litros, cajas, etc.
 }
 
 // Datos iniciales
 const INITIAL_SUPPLIES_STORE: Supplies[] = [
-  { id: 1, name: "Milk", quantity: 50, unit: "liters" },
-  { id: 2, name: "Sugar", quantity: 20, unit: "kg" },
-  { id: 3, name: "Cups", quantity: 200, unit: "units" },
+  { id: 1, nombre: "Leche", cantidad: 50, unidad: "litros" },
+  { id: 2, nombre: "Azucar", cantidad: 20, unidad: "kilogramos" },
+  { id: 3, nombre: "Copa", cantidad: 200, unidad: "unidades" },
 ];
 
 // Persistencia en localStorage
@@ -29,9 +29,9 @@ const setSuppliesStore = (value: Supplies[]) => {
 export const suppliesDataSource: DataSource<Supplies> = {
   fields: [
     { field: "id", headerName: "ID", width: 90 },
-    { field: "name", headerName: "Name", width: 200 },
-    { field: "quantity", headerName: "Quantity", type: "number", width: 120 },
-    { field: "unit", headerName: "Unit", width: 100 },
+    { field: "nombre", headerName: "Nombre", width: 200 },
+    { field: "cantidad", headerName: "Cantidad", type: "number", width: 120 },
+    { field: "unidad", headerName: "Unidad", width: 100 },
   ],
 
   getMany: async ({ paginationModel }) => {
@@ -47,7 +47,7 @@ export const suppliesDataSource: DataSource<Supplies> = {
   getOne: async (id) => {
     const store = getSuppliesStore();
     const supply = store.find((s) => s.id === Number(id));
-    if (!supply) throw new Error("Supplies not found");
+    if (!supply) throw new Error("Insumo no encontrado");
     return supply;
   },
 
@@ -55,9 +55,9 @@ export const suppliesDataSource: DataSource<Supplies> = {
     const store = getSuppliesStore();
     const newSupplies: Supplies = {
       id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1,
-      name: data.name ?? "",
-      quantity: data.quantity ?? 0,
-      unit: data.unit ?? "units",
+      nombre: data.nombre ?? "",
+      cantidad: data.cantidad ?? 0,
+      unidad: data.unidad ?? "unidades",
     };
     setSuppliesStore([...store, newSupplies]);
     return newSupplies;
@@ -75,7 +75,7 @@ export const suppliesDataSource: DataSource<Supplies> = {
         return s;
       })
     );
-    if (!updated) throw new Error("Supplies not found");
+    if (!updated) throw new Error("Insumo no encontrado");
     return updated;
   },
 
@@ -86,9 +86,9 @@ export const suppliesDataSource: DataSource<Supplies> = {
 
   validate: z
     .object({
-      name: z.string().nonempty("Name is required"),
-      quantity: z.number().min(0, "Quantity must be at least 0"),
-      unit: z.string().nonempty("Unit is required"),
+      nombre: z.string().nonempty("Nombre es requerido"),
+      cantidad: z.number().min(0, "Cantidad debe ser al menos 0"),
+      unidad: z.string().nonempty("Unidad es requerida"),
     })
     ["~standard"].validate,
 };
