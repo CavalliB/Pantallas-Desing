@@ -16,7 +16,6 @@ export default function RecipesCrudPage() {
   const { recipeId } = useParams();
   const navigate = useNavigate();
 
-  // Botón para volver a Production Orders
   const handleBack = () => {
     navigate("/production-orders");
   };
@@ -46,14 +45,13 @@ export default function RecipesCrudPage() {
       rootPath="/recipes"
       initialPageSize={10}
       defaultValues={{
-        name: "",
-        description: "",
-        ingredients: [],
+        Nombre: "",
+        Descripcion: "",
       }}
       pageTitles={{
-        show: `Recipe ${recipeId}`,
-        create: "New Recipe",
-        edit: `Recipe ${recipeId} - Edit`,
+        show: `Receta ${recipeId}`,
+        create: "Nueva Receta",
+        edit: `Receta ${recipeId} - Editar`,
       }}
       slots={{
         pageContainer: CustomPageContainer, 

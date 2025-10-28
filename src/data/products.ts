@@ -2,36 +2,36 @@ import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
 
 // Tipos de categoría de producto
-type ProductCategory = 'IceCream' | 'Desserts' | 'Others';
+type ProductCategory = 'Helado' | 'Postres' | 'Otros';
 
 export interface Product extends DataModel {
   id: number;
-  name: string;
-  price: number;
-  category: ProductCategory;
+  nombre: string;
+  precio: number;
+  categoria: ProductCategory;
   stock: number;
 }
 
 const INITIAL_PRODUCTS_STORE: Product[] = [
   {
     id: 1,
-    name: 'Dulce de Leche',
-    price: 0,
-    category: 'IceCream',
+    nombre: 'Dulce de Leche',
+    precio: 0,
+    categoria: 'Helado',
     stock: 50,
   },
   {
     id: 2,
-    name: 'ChocoChoco Cake',
-    price: 49,
-    category: 'Desserts',
+    nombre: 'ChocoChoco Torta',
+    precio: 49,
+    categoria: 'Postres',
     stock: 120,
   },
   {
     id: 3,
-    name: 'Spoon',
-    price: 2,
-    category: 'Others',
+    nombre: 'Cuchara',
+    precio: 2,
+    categoria: 'Otros',
     stock: 500,
   },
 ];
@@ -48,13 +48,13 @@ const setProductsStore = (value: Product[]) => {
 export const productsDataSource: DataSource<Product> = {
   fields: [
     { field: 'id', headerName: 'ID' },
-    { field: 'name', headerName: 'Name', width: 140 },
-    { field: 'price', headerName: 'Price', type: 'number' },
+    { field: 'nombre', headerName: 'Nombre', width: 140 },
+    { field: 'precio', headerName: 'Precio', type: 'number' },
     {
-      field: 'category',
-      headerName: 'Category',
+      field: 'categoria',
+      headerName: 'Categoria',
       type: 'singleSelect',
-      valueOptions: ['IceCream', 'Desserts', 'Others'], // ✔ ahora coincide
+      valueOptions: ['Helado', 'Postres', 'Otros'], // ✔ ahora coincide
       width: 160,
     },
 
@@ -127,15 +127,15 @@ export const productsDataSource: DataSource<Product> = {
 
     const productsStore = getProductsStore();
     // Validar que los campos requeridos estén presentes
-    const { name, price, category, stock } = data;
-    if (!name || !price || !category || !stock) {
+    const { nombre, precio, categoria, stock } = data;
+    if (!nombre || !precio || !categoria || !stock) {
       throw new Error('Todos los campos son obligatorios');
     }
     const newProduct: Product = {
       id: productsStore.reduce((max, p) => Math.max(max, p.id), 0) + 1,
-      name,
-      price,
-      category,
+      nombre,
+      precio,
+      categoria,
       stock,
     };
     setProductsStore([...productsStore, newProduct]);
@@ -157,7 +157,7 @@ export const productsDataSource: DataSource<Product> = {
       }),
     );
 
-    if (!updatedProduct) throw new Error('Product not found');
+    if (!updatedProduct) throw new Error('Producto no encontrado para actualizar');
     return updatedProduct;
   },
   deleteOne: async (productId) => {
@@ -166,13 +166,13 @@ export const productsDataSource: DataSource<Product> = {
     setProductsStore(productsStore.filter((p) => p.id !== Number(productId)));
   },
   validate: z.object({
-    name: z.string().nonempty('Name is required'),
-    price: z.number().min(0, 'Price must be at least 0'),
-    category: z.enum(['IceCream', 'Desserts', 'Others'], {
-      errorMap: () => ({ message: 'Category must be IceCream, Desserts or Others' }),
+    nombre: z.string().nonempty('Nombre es requerido'),
+    precio: z.number().min(0, 'Precio debe ser al menos 0'),
+    categoria: z.enum(['Helado', 'Postres', 'Otros'], {
+      errorMap: () => ({ message: 'La categoria debe ser Helado, Postres o otros' }),
     }),
 
-    stock: z.number().min(0, 'Stock must be at least 0'),
+    stock: z.number().min(0, 'Debe haber al menos 0 en stock'),
   })['~standard'].validate,
 };
 

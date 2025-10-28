@@ -16,9 +16,8 @@ export default function ProductionOrdersCrudPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
 
-  // Botón que redirige a la lista de recetas
   const handleModifyRecipe = () => {
-    navigate("/recipes"); // redirige a la lista de recetas
+    navigate("/recipes"); 
   };
 
   // Toolbar con el botón
@@ -53,14 +52,14 @@ export default function ProductionOrdersCrudPage() {
       rootPath="/production-orders"
       initialPageSize={25}
       defaultValues={{
-        quantity: 1,
-        status: "Pending",
-        category: "IceCream",
+        cantidad: 1,
+        status: "Pendiente",
+        categoria: "Helado",
       }}
       pageTitles={{
-        show: `Order ${orderId}`,
-        create: "New Production Order",
-        edit: `Order ${orderId} - Edit`,
+        show: `Orden de produccion ${orderId}`,
+        create: "Nueva orden de producción",
+        edit: `Orden de produccion ${orderId} - Editar`,
       }}
       slots={{
         pageContainer: CustomPageContainer, // usamos el PageContainer custom

@@ -5,10 +5,10 @@ import { getProductsStore } from "./products";
 export interface ProductionOrder extends DataModel {
   id: number;
   productId: number;
-  quantity: number;
-  category: "IceCream"; // solo IceCream
-  status: "Pending" | "InProgress" | "Completed";
-  createdAt: string;
+  cantidad: number;
+  categoria: "Helado"; // solo Helado
+  status: "Pendiente" | "En progeso" | "Finalizado";
+  creada: string;
 }
 
 // Datos iniciales de ejemplo
@@ -16,10 +16,10 @@ const INITIAL_ORDERS_STORE: ProductionOrder[] = [
   {
     id: 1,
     productId: 1,
-    quantity: 20,
-    category: "IceCream",
-    status: "Pending",
-    createdAt: new Date().toISOString(),
+    cantidad: 20,
+    categoria: "Helado",
+    status: "Pendiente",
+    creada: new Date().toISOString(),
   },
 ];
 
@@ -37,19 +37,19 @@ const setOrdersStore = (value: ProductionOrder[]) => {
 export const productionOrderDataSource: DataSource<ProductionOrder> = {
   fields: [
     { field: "id", headerName: "ID", width: 90 },
-    { field: "productId", headerName: "Product ID", type: "number", width: 120 },
-    { field: "quantity", headerName: "Quantity", type: "number", width: 120 },
-    { field: "category", headerName: "Category", width: 140 },
+    { field: "productId", headerName: "Producto ID", type: "number", width: 120 },
+    { field: "cantidad", headerName: "Cantidad", type: "number", width: 120 },
+    { field: "categoria", headerName: "Categoria", width: 140 },
     {
       field: "status",
       headerName: "Status",
       type: "singleSelect",
-      valueOptions: ["Pending", "InProgress", "Completed"],
+      valueOptions: ["Pendiente", "En progeso", "Finalizado"],
       width: 160,
     },
     {
-      field: 'createdAt',
-      headerName: 'Created at',
+      field: 'creada',
+      headerName: 'Creada',
       type: 'dateTime',
       valueGetter: (value: string) => value && new Date(value),
       editable: false,
@@ -79,20 +79,20 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
     const ordersStore = getOrdersStore();
     const productsStore = getProductsStore();
 
-    // Validar que el producto exista y sea IceCream
+    // Validar que el producto exista y sea Helado
     const product = productsStore.find((p) => p.id === data.productId);
-    if (!product) throw new Error("Product not found");
-    if (product.category !== "IceCream") {
-      throw new Error("Only IceCream products can be used in production orders");
+    if (!product) throw new Error("Producto no encontrado");
+    if (product.categoria !== "Helado") {
+      throw new Error("Solo helados pueden tener órdenes de producción");
     }
 
     const newOrder: ProductionOrder = {
       id: ordersStore.reduce((max, o) => Math.max(max, o.id), 0) + 1,
       productId: product.id,
-      quantity: data.quantity ?? 1,
-      category: "IceCream",
-      status: data.status ?? "Pending",
-      createdAt: new Date().toISOString(),
+      cantidad: data.cantidad ?? 1,
+      categoria: "Helado",
+      status: data.status ?? "Pendiente",
+      creada: new Date().toISOString(),
     };
 
     setOrdersStore([...ordersStore, newOrder]);
@@ -113,7 +113,7 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
       })
     );
 
-    if (!updatedOrder) throw new Error("Order not found");
+    if (!updatedOrder) throw new Error("Orden de producción no encontrada para actualizar");
     return updatedOrder;
   },
 
@@ -124,10 +124,10 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
 
   validate: z
     .object({
-      productId: z.number().min(1, "Product is required"),
-      quantity: z.number().min(1, "Quantity must be at least 1"),
-      category: z.enum(["IceCream"]),
-      status: z.enum(["Pending", "InProgress", "Completed"]),
+      productId: z.number().min(1, "El Product ID es requerido"),
+      cantidad: z.number().min(1, "Cantidad debe ser al menos 1"),
+      categoria: z.enum(["Helado"]),
+      status: z.enum(["Pendiente", "En progeso", "Finalizado"]),
     })
     ["~standard"].validate,
 };

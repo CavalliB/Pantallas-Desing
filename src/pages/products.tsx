@@ -13,15 +13,15 @@ export default function ProductsCrudPage() {
             rootPath="/products"
             initialPageSize={25}
             defaultValues={{
-                name: 'New Product',       // Nombre por defecto
-                price: 0,                  // Precio por defecto
-                category: 'Desserts',   // Categoría por defecto (debe ser válida)
-                stock: 0,                  // Stock por defecto
+                nombre: 'Nuevo Producto',      
+                precio: 0,                  
+                categoria: 'Postres',   
+                stock: 0,                  
             }}
             pageTitles={{
-                show: `Product ${productId}`,
-                create: 'New Product',
-                edit: `Product ${productId} - Edit`,
+                show: `Producto ${productId}`,
+                create: 'Nuevo Producto',
+                edit: `Producto ${productId} - Editar`,
             }}
         />
     );
