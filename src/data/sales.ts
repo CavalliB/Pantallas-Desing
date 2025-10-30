@@ -17,7 +17,7 @@ export interface Sale extends DataModel {
 const INITIAL_SALES_STORE: Sale[] = [
   { 
     id: 1, 
-    date: '2025-10-28', 
+    date: new Date('2025-10-28').toISOString(), 
     customerName: 'María González', 
     product: 'Helado de Chocolate', 
     quantity: 2, 
@@ -27,7 +27,7 @@ const INITIAL_SALES_STORE: Sale[] = [
   },
   { 
     id: 2, 
-    date: '2025-10-29', 
+    date: new Date('2025-10-29').toISOString(), 
     customerName: 'Juan Pérez', 
     product: 'Helado de Vainilla', 
     quantity: 3, 
@@ -37,7 +37,7 @@ const INITIAL_SALES_STORE: Sale[] = [
   },
   { 
     id: 3, 
-    date: '2025-10-30', 
+    date: new Date('2025-10-30').toISOString(), 
     customerName: 'Ana Martínez', 
     product: 'Helado de Fresa', 
     quantity: 1, 
@@ -62,9 +62,10 @@ export const salesDataSource: DataSource<Sale> = {
     { 
       field: 'date', 
       headerName: 'Fecha', 
-      type: 'date', 
+      type: 'dateTime', 
       width: 130,
-      valueGetter: (value) => value ? new Date(value) : null,
+      valueGetter: (value: string) => value && new Date(value),
+      editable: false,
     },
     { field: 'customerName', headerName: 'Cliente', width: 180 },
     { field: 'product', headerName: 'Producto', width: 180 },
@@ -103,6 +104,7 @@ export const salesDataSource: DataSource<Sale> = {
     const newSale = { 
       id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1, 
       ...data,
+      date: data.date ?? new Date().toISOString(),
       total: calculatedTotal
     } as Sale;
     setSalesStore([...store, newSale]);
@@ -130,7 +132,7 @@ export const salesDataSource: DataSource<Sale> = {
   },
 
   validate: z.object({
-    date: z.string().nonempty('Fecha es obligatoria'),
+    date: z.string().optional(),
     customerName: z.string().nonempty('Cliente es obligatorio'),
     product: z.string().nonempty('Producto es obligatorio'),
     quantity: z.number().min(1, 'Cantidad debe ser mayor a 0'),
