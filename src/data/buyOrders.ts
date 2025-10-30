@@ -7,9 +7,10 @@ type OrderBuyStatus = 'pendiente' | 'finalizado' | 'cancelado';
 export interface BuyOrder extends DataModel {
     id: number;
     date: string;
+    supplierId?: number;
     total: number;
     status: OrderBuyStatus;
-    // Array de insumos/lineas compradas asociados a la orden
+    // Array de insumos
     items?: Array<{
         id: number;
         productName: string;
@@ -22,6 +23,7 @@ const INITIAL_BUY_ORDERS_STORE: BuyOrder[] = [
     {
         id: 1,
         date: new Date().toISOString(),
+        supplierId: 1,
         total: 150.0,
         status: 'pendiente',
         items: [
@@ -32,6 +34,7 @@ const INITIAL_BUY_ORDERS_STORE: BuyOrder[] = [
     {
         id: 2,
         date: new Date().toISOString(),
+        supplierId: 2,
         total: 200.0,
         status: 'finalizado',
         items: [
@@ -41,6 +44,7 @@ const INITIAL_BUY_ORDERS_STORE: BuyOrder[] = [
     {
         id: 3,
         date: new Date().toISOString(),
+        supplierId: 3,
         total: 100.0,
         status: 'cancelado',
         items: [],
@@ -59,6 +63,8 @@ const setBuyOrdersStore = (value: BuyOrder[]) => {
 export const buyOrdersDataSource: DataSource<BuyOrder> = {
     fields: [
         { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'supplierId', headerName: 'Proveedor', width: 180 },
+
         {
             field: 'date',
             headerName: 'date',
@@ -100,6 +106,7 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
         const newBuyOrder: BuyOrder = {
             id: newId,
             date: data.date ?? new Date().toISOString(),
+            supplierId: (data as any).supplierId ?? undefined,
             total: data.total ?? 0,
             status: data.status ?? 'pendiente',
             items: Array.isArray((data as any).items) ? (data as any).items : [],
@@ -120,6 +127,7 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
                 updated = {
                     ...s,
                     date: data.date ?? s.date,
+                    supplierId: (data as any).supplierId ?? s.supplierId,
                     total: data.total ?? s.total,
                     status: data.status ?? s.status,
                     items,
@@ -141,6 +149,7 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
 
     validate: z
         .object({
+            supplierId: z.number().optional(),
             date: z.string().optional(),
             total: z.number().optional(),
             status: z.enum(['pendiente', 'finalizado', 'cancelado']).default('pendiente'),

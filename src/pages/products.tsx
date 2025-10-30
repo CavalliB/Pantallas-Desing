@@ -2,9 +2,29 @@ import * as React from 'react';
 import { Crud } from '@toolpad/core/Crud';
 import { useParams } from 'react-router';
 import { productsDataSource, Product, productsCache } from '../data/products';
+import BackButton from '../components/BackButton';
+import {
+    PageContainer,
+    PageHeader,
+    PageHeaderToolbar,
+} from '@toolpad/core/PageContainer';
 
 export default function ProductsCrudPage() {
     const { productId } = useParams();
+
+    const CustomToolbar = () => (
+        <PageHeaderToolbar>
+            {productId && <BackButton to="/products" />}
+        </PageHeaderToolbar>
+    );
+
+    const CustomPageHeader = (headerProps: any) => {
+        return <PageHeader {...headerProps} slots={{ toolbar: CustomToolbar }} />;
+    };
+
+    const CustomPageContainer = (props: any) => {
+        return <PageContainer {...props} slots={{ header: CustomPageHeader }} />;
+    };
 
     return (
         <Crud<Product>
@@ -22,6 +42,9 @@ export default function ProductsCrudPage() {
                 show: `Producto ${productId}`,
                 create: 'Nuevo Producto',
                 edit: `Producto ${productId} - Editar`,
+            }}
+            slots={{
+                pageContainer: CustomPageContainer,
             }}
         />
     );

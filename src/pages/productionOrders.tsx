@@ -1,6 +1,7 @@
 import { Crud } from "@toolpad/core/Crud";
 import { useParams, useNavigate } from "react-router";
 import { Button } from "@mui/material";
+import BackButton from "../components/BackButton";
 import {
   PageContainer,
   PageHeader,
@@ -24,6 +25,7 @@ export default function ProductionOrdersCrudPage() {
   const CustomToolbar = () => {
     return (
       <PageHeaderToolbar>
+        {orderId && <BackButton to="/production-orders" />}
         <Button
           variant="contained"
           color="secondary"

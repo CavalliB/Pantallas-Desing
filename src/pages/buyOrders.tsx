@@ -17,6 +17,12 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { buyOrdersDataSource, BuyOrder, buyOrderCache } from "../data/buyOrders";
+import BackButton from "../components/BackButton";
+import {
+    PageContainer,
+    PageHeader,
+    PageHeaderToolbar,
+} from '@toolpad/core/PageContainer';
 
 export default function BuyOrdersCrudPage() {
     const { buyOrdersId } = useParams();
@@ -98,12 +104,19 @@ export default function BuyOrdersCrudPage() {
     };
 
     const CustomToolbar = () => (
-        <div style={{ display: "flex", gap: 8 }}>
-            <Button variant="contained" color="secondary" disabled>
-                Editar Insumos
-            </Button>
-        </div>
+        <PageHeaderToolbar>
+            {currentId && <BackButton to="/buyOrders" />}
+            
+        </PageHeaderToolbar>
     );
+
+    const CustomPageHeader = (headerProps: any) => {
+        return <PageHeader {...headerProps} slots={{ toolbar: CustomToolbar }} />;
+    };
+
+    const CustomPageContainer = (props: any) => {
+        return <PageContainer {...props} slots={{ header: CustomPageHeader }} />;
+    };
 
     return (
         <>
@@ -123,9 +136,9 @@ export default function BuyOrdersCrudPage() {
                     create: "Nueva Orden de compra",
                     edit: `Orden de compra ${buyOrdersId} - Editar`,
                 }}
-            /* slots={{
-                toolbar: CustomToolbar,
-            }} */
+                slots={{
+                    pageContainer: CustomPageContainer,
+                }}
             />
 
             {currentId && !isNaN(Number(currentId)) && Number(currentId) > 0 && (
