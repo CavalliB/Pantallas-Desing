@@ -1,70 +1,41 @@
 # Heladeria - CRUD Application
 
 ## Overview
-This is a CRUD (Create, Read, Update, Delete) application for managing an ice cream shop ("Heladeria"). Built with React, TypeScript, Vite, Material-UI, and Toolpad Core.
-
-## Project Setup
-- **Framework**: React 19 with TypeScript
-- **Build Tool**: Vite 5.4
-- **UI Library**: Material-UI (MUI) v7
-- **Routing**: React Router v7
-- **Dashboard Framework**: Toolpad Core v0.16
+This is a React + Vite + TypeScript CRUD application for managing an ice cream shop (Heladeria). Built with Material-UI and Toolpad Core for a modern dashboard interface.
 
 ## Project Structure
-```
-src/
-├── components/     # Reusable components
-├── data/          # Mock data for the application
-├── layouts/       # Layout components
-├── pages/         # Page components for each CRUD section
-├── App.tsx        # Main app with navigation setup
-└── main.tsx       # Application entry point
-```
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite 5.4
+- **UI Framework**: Material-UI (@mui/material)
+- **Routing**: React Router 7
+- **Dashboard**: Toolpad Core
 
 ## Features
-The application manages the following entities:
-- **Dashboard**: Main overview page
-- **Proveedores** (Suppliers): Supplier management
-- **Productos** (Products): Product catalog
-- **Ordenes de Producción** (Production Orders): Production order tracking
-- **Insumos** (Supplies): Supply inventory
-- **Recetas** (Recipes): Recipe management
-- **Ordenes de Compra** (Buy Orders): Purchase order management
+The application manages:
+- Dashboard overview
+- Suppliers (Proveedores)
+- Products (Productos)
+- Production Orders (Ordenes de Producción)
+- Supplies (Insumos)
+- Buy Orders (Ordenes de Compra)
+- Recipes (Recetas)
 
-## Development
+## Development Setup
+The project is configured to run on Replit with:
+- Server binding to `0.0.0.0:5000`
+- Allowed hosts configured for `.replit.dev` domain
+- HMR (Hot Module Reload) configured for Replit proxy
 
-### Running the Application
-The dev server is configured to run on port 5000:
-```bash
-npm run dev
-```
+## Running the Application
+The workflow `dev` runs `npm run dev` and serves the application on port 5000.
 
-### Building for Production
-```bash
-npm run build
-```
-
-### Preview Production Build
-```bash
-npm run preview
-```
-
-## Replit Configuration
-
-### Development Setup
-- Port: 5000
-- Host: 0.0.0.0 (required for Replit environment)
-- HMR: Configured for Replit's proxy environment
-
-### Deployment
-- Target: Autoscale
+## Deployment
+Configured for autoscale deployment with:
 - Build: `npm run build`
 - Run: `npx vite preview --host 0.0.0.0 --port 5000`
 
 ## Recent Changes
-- **2025-10-30**: Initial Replit setup
-  - Configured Vite to run on port 5000
-  - Removed duplicate vite.config.js file
+- **Oct 30, 2025**: Initial setup for Replit environment
+  - Configured Vite for Replit proxy compatibility
   - Set up development workflow
-  - Configured deployment for production
-  - Installed npm dependencies
+  - Configured deployment settings
