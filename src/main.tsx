@@ -10,6 +10,8 @@ import ProductionOrdersCrudPage from './pages/productionOrders';
 import SuppliesCrudPage from './pages/supplies';
 import RecipesCrudPage from './pages/recipes';
 import buyOrdersCrudPage from './pages/buyOrders';
+import CustomersCrudPage from './pages/customers';
+import SalesCrudPage from './pages/sales';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,14 @@ const router = createBrowserRouter([
           {
             path: 'buyOrders/:buyOrdersId?/*',
             Component: buyOrdersCrudPage,
+          },
+          {
+            path: 'customers/:customerId?/*',
+            Component: CustomersCrudPage,
+          },
+          {
+            path: 'sales/:saleId?/*',
+            Component: SalesCrudPage,
           }
 
         ],

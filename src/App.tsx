@@ -4,6 +4,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import IcecreamIcon from '@mui/icons-material/Icecream';
 import BlenderIcon from '@mui/icons-material/Blender';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import GroupIcon from '@mui/icons-material/Group';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Outlet } from 'react-router';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import type { Navigation } from '@toolpad/core/AppProvider';
@@ -42,6 +44,18 @@ const NAVIGATION: Navigation = [
     title: 'Ordenes de Compra',
     icon: <InventoryIcon />,
     pattern: 'buyOrders{/:buyOrdersId}*',
+  },
+  {
+    segment: 'customers',
+    title: 'Clientes',
+    icon: <GroupIcon />,
+    pattern: 'customers{/:customerId}*',
+  },
+  {
+    segment: 'sales',
+    title: 'Ventas',
+    icon: <ShoppingCartIcon />,
+    pattern: 'sales{/:saleId}*',
   },
 ];
 

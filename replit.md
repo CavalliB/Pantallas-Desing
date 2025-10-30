@@ -19,6 +19,8 @@ The application manages:
 - Supplies (Insumos)
 - Buy Orders (Ordenes de Compra)
 - Recipes (Recetas)
+- **Customers (Clientes)** - Manage customer information with name, email, phone, and address
+- **Sales (Ventas)** - Track sales transactions with customer, product, quantity, pricing, and payment method
 
 ## Development Setup
 The project is configured to run on Replit with:
@@ -35,6 +37,12 @@ Configured for autoscale deployment with:
 - Run: `npx vite preview --host 0.0.0.0 --port 5000`
 
 ## Recent Changes
+- **Oct 30, 2025**: Added Customers and Sales modules
+  - Created CRUD interfaces for Customers with full contact information
+  - Created CRUD interfaces for Sales with automatic total calculation
+  - Added navigation items with appropriate icons (GroupIcon for Customers, ShoppingCartIcon for Sales)
+  - Configured date handling for sales transactions
+  
 - **Oct 30, 2025**: Initial setup for Replit environment
   - Configured Vite for Replit proxy compatibility
   - Set up development workflow
