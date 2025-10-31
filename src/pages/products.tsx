@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Crud } from '@toolpad/core/Crud';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
+import { Button } from "@mui/material";
 import { productsDataSource, Product, productsCache } from '../data/products';
 import BackButton from '../components/BackButton';
 import {
@@ -11,10 +12,22 @@ import {
 
 export default function ProductsCrudPage() {
     const { productId } = useParams();
+    const navigate = useNavigate();
+
+    const handleModifyRecipe = () => {
+        navigate("/recipes"); 
+    };
 
     const CustomToolbar = () => (
         <PageHeaderToolbar>
             {productId && <BackButton to="/products" />}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleModifyRecipe}
+            >
+                Recetas
+            </Button>
         </PageHeaderToolbar>
     );
 

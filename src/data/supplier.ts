@@ -8,12 +8,13 @@ export interface Supplier extends DataModel {
   name: string;
   role: SupplierRole;
   Email: string;
+  cuit: string;
 }
 
 const INITIAL_SUPPLIERS_STORE: Supplier[] = [
-  { id: 1, name: 'Edward Perry', role: 'producto', Email: 'hola@gmail.com'},
-  { id: 2, name: 'Josephine Drake', role: 'insumos', Email: 'hola@gmail.com' },
-  { id: 3, name: 'Cody Phillips', role: 'otros', Email: 'hola@gmail.com' },
+  { id: 1, name: 'Edward Perry', role: 'producto', Email: 'hola@gmail.com', cuit: '20-12345678-9' },
+  { id: 2, name: 'Josephine Drake', role: 'insumos', Email: 'hola@gmail.com', cuit: '23-87654321-0' },
+  { id: 3, name: 'Cody Phillips', role: 'otros', Email: 'hola@gmail.com', cuit: '27-11223344-5' },
 ];
 
 const getSuppliersStore = (): Supplier[] => {
@@ -31,17 +32,17 @@ export const suppliersDataSource: DataSource<Supplier> = {
     { field: 'name', headerName: 'Nombre', width: 180 },
     {
       field: 'role',
-      headerName: 'Categoria',
+      headerName: 'Categoría',
       type: 'singleSelect',
       valueOptions: ['producto', 'insumos', 'otros'],
       width: 140,
     },
     { field: 'Email', headerName: 'Email', width: 200 },
+    { field: 'cuit', headerName: 'CUIT', width: 160 },
   ],
 
   getMany: async ({ paginationModel }) => {
     const store = getSuppliersStore();
-
     const start = paginationModel.page * paginationModel.pageSize;
     const end = start + paginationModel.pageSize;
     return {
@@ -58,7 +59,10 @@ export const suppliersDataSource: DataSource<Supplier> = {
 
   createOne: async (data) => {
     const store = getSuppliersStore();
-    const newSupplier = { id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1, ...data } as Supplier;
+    const newSupplier = {
+      id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1,
+      ...data,
+    } as Supplier;
     setSuppliersStore([...store, newSupplier]);
     return newSupplier;
   },
@@ -82,10 +86,15 @@ export const suppliersDataSource: DataSource<Supplier> = {
     setSuppliersStore(store);
   },
 
-  validate: z.object({
-    name: z.string().nonempty('Nombre es obligatorio'),
-    role: z.enum(['producto', 'insumos', 'otros']),
-  })['~standard'].validate,
+  validate: z
+    .object({
+      name: z.string().nonempty('Nombre es obligatorio'),
+      role: z.enum(['producto', 'insumos', 'otros']),
+      Email: z.string().email('Email inválido'),
+      cuit: z
+        .string()
+        .regex(/^\d{2}-\d{8}-\d{1}$/, 'CUIT debe tener formato XX-XXXXXXXX-X'),
+    })['~standard'].validate,
 };
 
 export const suppliersCache = new DataSourceCache();

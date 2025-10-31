@@ -17,22 +17,11 @@ export default function ProductionOrdersCrudPage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
 
-  const handleModifyRecipe = () => {
-    navigate("/recipes"); 
-  };
-
   // Toolbar con el botón
   const CustomToolbar = () => {
     return (
       <PageHeaderToolbar>
         {orderId && <BackButton to="/production-orders" />}
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleModifyRecipe}
-        >
-          Modificar receta
-        </Button>
       </PageHeaderToolbar>
     );
   };

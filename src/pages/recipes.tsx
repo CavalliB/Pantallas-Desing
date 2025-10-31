@@ -17,7 +17,7 @@ export default function RecipesCrudPage() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate("/production-orders");
+    navigate("/products");
   };
 
   const CustomToolbar = () => {
