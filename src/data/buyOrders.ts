@@ -71,6 +71,8 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
             type: 'dateTime',
             valueGetter: (value: string) => value && new Date(value),
             editable: false,
+            width: 180,
+
         },
         { field: 'total', headerName: 'Total', type: 'number', width: 100 },
         {

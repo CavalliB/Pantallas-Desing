@@ -1,6 +1,6 @@
 import { DataModel, DataSource, DataSourceCache } from "@toolpad/core/Crud";
 import { z } from "zod";
-import { getProductsStore } from "./products"; 
+import { getProductsStore } from "./products";
 
 export interface ProductionOrder extends DataModel {
   id: number;
@@ -53,6 +53,8 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
       type: 'dateTime',
       valueGetter: (value: string) => value && new Date(value),
       editable: false,
+      width: 180,
+
     },
   ],
 
@@ -129,7 +131,7 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
       categoria: z.enum(["Helado"]),
       status: z.enum(["Pendiente", "En progeso", "Finalizado"]),
     })
-    ["~standard"].validate,
+  ["~standard"].validate,
 };
 
 export const productionOrdersCache = new DataSourceCache();

@@ -13,27 +13,9 @@ export interface Product extends DataModel {
 }
 
 const INITIAL_PRODUCTS_STORE: Product[] = [
-  {
-    id: 1,
-    nombre: 'Dulce de Leche',
-    precio: 0,
-    categoria: 'Helado',
-    stock: 50,
-  },
-  {
-    id: 2,
-    nombre: 'ChocoChoco Torta',
-    precio: 49,
-    categoria: 'Postres',
-    stock: 120,
-  },
-  {
-    id: 3,
-    nombre: 'Cuchara',
-    precio: 2,
-    categoria: 'Otros',
-    stock: 500,
-  },
+  {id: 1,nombre: 'Dulce de Leche',precio: 0,categoria: 'Helado',stock: 50,},
+  {id: 2,nombre: 'ChocoChoco Torta',precio: 49,categoria: 'Postres',stock: 120,},
+  {id: 3,nombre: 'Cuchara',precio: 2,categoria: 'Otros',stock: 500,},
 ];
 
 export const getProductsStore = (): Product[] => {
@@ -50,18 +32,11 @@ export const productsDataSource: DataSource<Product> = {
     { field: 'id', headerName: 'ID' },
     { field: 'nombre', headerName: 'Nombre', width: 140 },
     { field: 'precio', headerName: 'Precio', type: 'number' },
-    {
-      field: 'categoria',
-      headerName: 'Categoria',
-      type: 'singleSelect',
-      valueOptions: ['Helado', 'Postres', 'Otros'], // ✔ ahora coincide
-      width: 160,
-    },
+    {field: 'categoria',headerName: 'Categoria',type: 'singleSelect',valueOptions: ['Helado', 'Postres', 'Otros'], width: 160,},
 
     { field: 'stock', headerName: 'Stock', type: 'number' },
   ],
   getMany: async ({ paginationModel, filterModel, sortModel }) => {
-    await new Promise((resolve) => setTimeout(resolve, 750));
 
     const productsStore = getProductsStore();
     let filteredProducts = [...productsStore];
