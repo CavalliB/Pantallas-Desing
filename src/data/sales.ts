@@ -2,16 +2,21 @@ import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
 
 type PaymentMethod = 'efectivo' | 'tarjeta' | 'transferencia';
+type SaleStatus = 'pendiente' | 'completada' | 'cancelada';
 
 export interface Sale extends DataModel {
   id: number;
   date: string;
   customerName: string;
-  product: string;
-  quantity: number;
-  unitPrice: number;
   total: number;
   paymentMethod: PaymentMethod;
+  status: SaleStatus;
+  items?: Array<{
+    id: number;
+    productName: string;
+    quantity: number;
+    price: number;
+  }>;
 }
 
 const INITIAL_SALES_STORE: Sale[] = [
@@ -19,31 +24,36 @@ const INITIAL_SALES_STORE: Sale[] = [
     id: 1, 
     date: new Date('2025-10-28').toISOString(), 
     customerName: 'María González', 
-    product: 'Helado de Chocolate', 
-    quantity: 2, 
-    unitPrice: 5.50, 
-    total: 11.00,
-    paymentMethod: 'efectivo'
+    total: 16.50,
+    paymentMethod: 'efectivo',
+    status: 'completada',
+    items: [
+      { id: 1, productName: 'Helado de Chocolate', quantity: 2, price: 5.50 },
+      { id: 2, productName: 'Helado de Fresa', quantity: 1, price: 5.50 },
+    ]
   },
   { 
     id: 2, 
     date: new Date('2025-10-29').toISOString(), 
     customerName: 'Juan Pérez', 
-    product: 'Helado de Vainilla', 
-    quantity: 3, 
-    unitPrice: 5.00, 
-    total: 15.00,
-    paymentMethod: 'tarjeta'
+    total: 23.50,
+    paymentMethod: 'tarjeta',
+    status: 'completada',
+    items: [
+      { id: 1, productName: 'Helado de Vainilla', quantity: 3, price: 5.00 },
+      { id: 2, productName: 'Paleta de Limón', quantity: 2, price: 4.25 },
+    ]
   },
   { 
     id: 3, 
     date: new Date('2025-10-30').toISOString(), 
     customerName: 'Ana Martínez', 
-    product: 'Helado de Fresa', 
-    quantity: 1, 
-    unitPrice: 6.00, 
-    total: 6.00,
-    paymentMethod: 'transferencia'
+    total: 12.00,
+    paymentMethod: 'transferencia',
+    status: 'pendiente',
+    items: [
+      { id: 1, productName: 'Helado de Mango', quantity: 2, price: 6.00 },
+    ]
   },
 ];
 
@@ -63,14 +73,11 @@ export const salesDataSource: DataSource<Sale> = {
       field: 'date', 
       headerName: 'Fecha', 
       type: 'dateTime', 
-      width: 130,
+      width: 180,
       valueGetter: (value: string) => value && new Date(value),
       editable: false,
     },
-    { field: 'customerName', headerName: 'Cliente', width: 180 },
-    { field: 'product', headerName: 'Producto', width: 180 },
-    { field: 'quantity', headerName: 'Cantidad', type: 'number', width: 100 },
-    { field: 'unitPrice', headerName: 'Precio Unit.', type: 'number', width: 120 },
+    { field: 'customerName', headerName: 'Cliente', width: 200 },
     { field: 'total', headerName: 'Total', type: 'number', width: 120 },
     {
       field: 'paymentMethod',
@@ -78,6 +85,13 @@ export const salesDataSource: DataSource<Sale> = {
       type: 'singleSelect',
       valueOptions: ['efectivo', 'tarjeta', 'transferencia'],
       width: 150,
+    },
+    {
+      field: 'status',
+      headerName: 'Estado',
+      type: 'singleSelect',
+      valueOptions: ['pendiente', 'completada', 'cancelada'],
+      width: 130,
     },
   ],
 
@@ -100,13 +114,18 @@ export const salesDataSource: DataSource<Sale> = {
 
   createOne: async (data) => {
     const store = getSalesStore();
-    const calculatedTotal = (data.quantity || 0) * (data.unitPrice || 0);
-    const newSale = { 
-      id: store.reduce((max, s) => Math.max(max, s.id), 0) + 1, 
-      ...data,
+    const newId = store.reduce((max, s) => Math.max(max, s.id), 0) + 1;
+
+    const newSale: Sale = {
+      id: newId,
       date: data.date ?? new Date().toISOString(),
-      total: calculatedTotal
-    } as Sale;
+      customerName: data.customerName ?? '',
+      total: data.total ?? 0,
+      paymentMethod: data.paymentMethod ?? 'efectivo',
+      status: data.status ?? 'pendiente',
+      items: Array.isArray((data as any).items) ? (data as any).items : [],
+    };
+
     setSalesStore([...store, newSale]);
     return newSale;
   },
@@ -115,8 +134,19 @@ export const salesDataSource: DataSource<Sale> = {
     let updated: Sale | null = null;
     const store = getSalesStore().map((s) => {
       if (s.id === Number(id)) {
-        const calculatedTotal = (data.quantity || s.quantity) * (data.unitPrice || s.unitPrice);
-        updated = { ...s, ...data, total: calculatedTotal };
+        const items = Array.isArray((data as any).items)
+          ? data.items
+          : s.items ?? [];
+
+        updated = {
+          ...s,
+          date: data.date ?? s.date,
+          customerName: data.customerName ?? s.customerName,
+          total: data.total ?? s.total,
+          paymentMethod: data.paymentMethod ?? s.paymentMethod,
+          status: data.status ?? s.status,
+          items,
+        };
         return updated;
       }
       return s;
@@ -134,10 +164,19 @@ export const salesDataSource: DataSource<Sale> = {
   validate: z.object({
     date: z.string().optional(),
     customerName: z.string().nonempty('Cliente es obligatorio'),
-    product: z.string().nonempty('Producto es obligatorio'),
-    quantity: z.number().min(1, 'Cantidad debe ser mayor a 0'),
-    unitPrice: z.number().min(0, 'Precio debe ser mayor o igual a 0'),
-    paymentMethod: z.enum(['efectivo', 'tarjeta', 'transferencia']),
+    total: z.number().optional(),
+    paymentMethod: z.enum(['efectivo', 'tarjeta', 'transferencia']).default('efectivo'),
+    status: z.enum(['pendiente', 'completada', 'cancelada']).default('pendiente'),
+    items: z
+      .array(
+        z.object({
+          id: z.number().optional(),
+          productName: z.string().min(1, 'Nombre del producto es requerido'),
+          quantity: z.number().min(1, 'Cantidad debe ser al menos 1'),
+          price: z.number().min(0, 'Precio debe ser mayor o igual a 0'),
+        })
+      )
+      .default([]),
   })['~standard'].validate,
 };
 
