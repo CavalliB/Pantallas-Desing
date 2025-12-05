@@ -1,5 +1,6 @@
 import { DataModel, DataSource, DataSourceCache } from '@toolpad/core/Crud';
 import { z } from 'zod';
+import { getRecipesStore } from './recipes';
 
 // Tipos de categoría de producto
 type ProductCategory = 'Helado' | 'Postres' | 'Otros';
@@ -11,13 +12,37 @@ export interface Product extends DataModel {
   categoria: ProductCategory;
   stock: number;
   unidad: string; // 'unidades', 'kg', 'litros', etc.
+  recipeId?: number;
 }
 
 // Datos iniciales
 const INITIAL_PRODUCTS_STORE: Product[] = [
-  { id: 1, nombre: 'Dulce de Leche', precio: 0, categoria: 'Helado', stock: 50, unidad: 'kg' },
-  { id: 2, nombre: 'ChocoChoco Torta', precio: 49, categoria: 'Postres', stock: 120, unidad: 'unidades' },
-  { id: 3, nombre: 'Cuchara', precio: 2, categoria: 'Otros', stock: 500, unidad: 'unidades' },
+  {
+    id: 1,
+    nombre: 'Dulce de Leche',
+    precio: 0,
+    categoria: 'Helado',
+    stock: 50,
+    unidad: 'kg',
+    recipeId: 1,
+  },
+  {
+    id: 2,
+    nombre: 'ChocoChoco Torta',
+    precio: 49,
+    categoria: 'Postres',
+    stock: 120,
+    unidad: 'unidades',
+    recipeId: 2,
+  },
+  {
+    id: 3,
+    nombre: 'Cuchara',
+    precio: 2,
+    categoria: 'Otros',
+    stock: 500,
+    unidad: 'unidades',
+  },
 ];
 
 // Persistencia en localStorage
@@ -47,8 +72,22 @@ export const productsDataSource: DataSource<Product> = {
       field: 'stock',
       headerName: 'Stock',
       type: 'number',
+      editable: false,
     },
-    { field: 'unidad', headerName: 'Unidad', width: 100 },
+    {
+      field: 'unidad',
+      headerName: 'Unidad',
+      width: 150,
+      type: 'singleSelect',
+      valueOptions: ['kg', 'unidades', 'litros', 'gr'],
+    },
+    {
+      field: 'recipeId',
+      headerName: 'Receta',
+      width: 200,
+      type: 'singleSelect',
+      valueOptions: () => getRecipesStore().map((r) => ({ value: r.id, label: r.nombre })),
+    },
   ],
 
   getMany: async ({ paginationModel, filterModel, sortModel }) => {
@@ -78,6 +117,17 @@ export const productsDataSource: DataSource<Product> = {
             default:
               return true;
           }
+        });
+      });
+    }
+
+    if (filterModel?.quickFilterValues?.length) {
+      const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+      filteredProducts = filteredProducts.filter((product) => {
+        return searchTerms.every((term) => {
+          return Object.values(product).some((value) =>
+            String(value).toLowerCase().includes(term)
+          );
         });
       });
     }
@@ -113,7 +163,7 @@ export const productsDataSource: DataSource<Product> = {
 
   createOne: async (data) => {
     const productsStore = getProductsStore();
-    const { nombre, precio, categoria, stock, unidad } = data;
+    const { nombre, precio, categoria, stock, unidad, recipeId } = data;
 
     if (!nombre || precio == null || !categoria || stock == null || !unidad) {
       throw new Error('Todos los campos son obligatorios');
@@ -126,6 +176,7 @@ export const productsDataSource: DataSource<Product> = {
       categoria,
       stock,
       unidad,
+      recipeId,
     };
     setProductsStore([...productsStore, newProduct]);
     return newProduct;
@@ -162,6 +213,7 @@ export const productsDataSource: DataSource<Product> = {
     }),
     stock: z.number().int().min(0, 'Debe haber al menos 0 en stock'),
     unidad: z.string().nonempty('Unidad es requerida'),
+    recipeId: z.number().optional(),
   })['~standard'].validate,
 };
 

@@ -15,7 +15,7 @@ const INITIAL_CUSTOMERS_STORE: Customer[] = [
     { id: 3, name: 'Ana Martínez', email: 'ana@email.com', phone: '555-0103', address: 'Carrera 10 #789' },
 ];
 
-const getCustomersStore = (): Customer[] => {
+export const getCustomersStore = (): Customer[] => {
     const value = localStorage.getItem('customers-store');
     return value ? JSON.parse(value) : INITIAL_CUSTOMERS_STORE;
 };
@@ -33,8 +33,19 @@ export const customersDataSource: DataSource<Customer> = {
         { field: 'address', headerName: 'Dirección', width: 150 },
     ],
 
-    getMany: async ({ paginationModel }) => {
-        const store = getCustomersStore();
+    getMany: async ({ paginationModel, filterModel }) => {
+        let store = getCustomersStore();
+
+        if (filterModel?.quickFilterValues?.length) {
+            const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+            store = store.filter((item) => {
+                return searchTerms.every((term) => {
+                    return Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(term)
+                    );
+                });
+            });
+        }
 
         const start = paginationModel.page * paginationModel.pageSize;
         const end = start + paginationModel.pageSize;

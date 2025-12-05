@@ -5,7 +5,7 @@ export interface Recipe extends DataModel {
   id: number;
   nombre: string;
   descripcion: string;
-  //ingredients: string[]; // En desarrollo XD
+  ingredientes: string;
 }
 
 const INITIAL_RECIPES_STORE: Recipe[] = [
@@ -13,10 +13,17 @@ const INITIAL_RECIPES_STORE: Recipe[] = [
     id: 1,
     nombre: "Helado de Vainilla",
     descripcion: "Receta clásica de helado de vainilla artesanal.",
+    ingredientes: "Leche, azúcar, bicarbonato de sodio, esencia de vainilla.",
+  },
+  {
+    id: 2,
+    nombre: "ChocoChoco Torta",
+    descripcion: "Postre de chocolate.",
+    ingredientes: "Galletitas de chocolate, dulce de leche, queso crema.",
   },
 ];
 
-const getRecipesStore = (): Recipe[] => {
+export const getRecipesStore = (): Recipe[] => {
   const value = localStorage.getItem("recipes-store");
   return value ? JSON.parse(value) : INITIAL_RECIPES_STORE;
 };
@@ -30,10 +37,23 @@ export const recipesDataSource: DataSource<Recipe> = {
     { field: "id", headerName: "ID", width: 90 },
     { field: "nombre", headerName: "Nombre", width: 200 },
     { field: "descripcion", headerName: "Descripcion", width: 300 },
+    { field: "ingredientes", headerName: "Ingredientes", width: 400 },
   ],
 
-  getMany: async ({ paginationModel }) => {
-    const recipesStore = getRecipesStore();
+  getMany: async ({ paginationModel, filterModel }) => {
+    let recipesStore = getRecipesStore();
+
+    if (filterModel?.quickFilterValues?.length) {
+      const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+      recipesStore = recipesStore.filter((item) => {
+        return searchTerms.every((term) => {
+          return Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(term)
+          );
+        });
+      });
+    }
+
     const start = paginationModel.page * paginationModel.pageSize;
     const end = start + paginationModel.pageSize;
     const paginatedRecipes = recipesStore.slice(start, end);
@@ -58,6 +78,7 @@ export const recipesDataSource: DataSource<Recipe> = {
       id: recipesStore.reduce((max, r) => Math.max(max, r.id), 0) + 1,
       nombre: data.nombre ?? "Receta sin nombre",
       descripcion: data.descripcion ?? "",
+      ingredientes: data.ingredientes ?? "",
     };
 
     setRecipesStore([...recipesStore, newRecipe]);
@@ -91,6 +112,7 @@ export const recipesDataSource: DataSource<Recipe> = {
     .object({
       nombre: z.string().min(1, "Name is required"),
       descripcion: z.string().optional(),
+      ingredientes: z.string().optional(),
     })
     ["~standard"].validate,
 };

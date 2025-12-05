@@ -11,6 +11,7 @@ export interface Sale extends DataModel {
     total: number;
     paymentMethod: PaymentMethod;
     status: SaleStatus;
+    comprobante?: string;
     items?: Array<{
         id: number;
         productName: string;
@@ -27,6 +28,7 @@ const INITIAL_SALES_STORE: Sale[] = [
         total: 16.50,
         paymentMethod: 'efectivo',
         status: 'completada',
+        comprobante: '',
         items: [
             { id: 1, productName: 'Helado de Chocolate', quantity: 2, price: 5.50 },
             { id: 2, productName: 'Helado de Fresa', quantity: 1, price: 5.50 },
@@ -39,6 +41,7 @@ const INITIAL_SALES_STORE: Sale[] = [
         total: 23.50,
         paymentMethod: 'tarjeta',
         status: 'completada',
+        comprobante: 'T-12345',
         items: [
             { id: 1, productName: 'Helado de Vainilla', quantity: 3, price: 5.00 },
             { id: 2, productName: 'Paleta de Limón', quantity: 2, price: 4.25 },
@@ -51,13 +54,14 @@ const INITIAL_SALES_STORE: Sale[] = [
         total: 12.00,
         paymentMethod: 'transferencia',
         status: 'pendiente',
+        comprobante: '',
         items: [
             { id: 1, productName: 'Helado de Mango', quantity: 2, price: 6.00 },
         ]
     },
 ];
 
-const getSalesStore = (): Sale[] => {
+export const getSalesStore = (): Sale[] => {
     const value = localStorage.getItem('sales-store');
     return value ? JSON.parse(value) : INITIAL_SALES_STORE;
 };
@@ -70,7 +74,7 @@ export const salesDataSource: DataSource<Sale> = {
     fields: [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'customerName', headerName: 'Cliente', width: 180 },
-        { field: 'total', headerName: 'Total', type: 'number', width: 120 },
+        { field: 'total', headerName: 'Total', type: 'number', width: 120, editable: false },
         {
             field: 'paymentMethod',
             headerName: 'Método de Pago',
@@ -85,6 +89,7 @@ export const salesDataSource: DataSource<Sale> = {
             valueOptions: ['pendiente', 'completada', 'cancelada'],
             width: 130,
         },
+        { field: 'comprobante', headerName: 'Comprobante', width: 150 },
         {
             field: 'date',
             headerName: 'Fecha',
@@ -95,8 +100,19 @@ export const salesDataSource: DataSource<Sale> = {
         },
     ],
 
-    getMany: async ({ paginationModel }) => {
-        const store = getSalesStore();
+    getMany: async ({ paginationModel, filterModel }) => {
+        let store = getSalesStore();
+
+        if (filterModel?.quickFilterValues?.length) {
+            const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+            store = store.filter((item) => {
+                return searchTerms.every((term) => {
+                    return Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(term)
+                    );
+                });
+            });
+        }
 
         const start = paginationModel.page * paginationModel.pageSize;
         const end = start + paginationModel.pageSize;
@@ -123,6 +139,7 @@ export const salesDataSource: DataSource<Sale> = {
             total: data.total ?? 0,
             paymentMethod: data.paymentMethod ?? 'efectivo',
             status: data.status ?? 'pendiente',
+            comprobante: data.comprobante ?? '',
             items: Array.isArray((data as any).items) ? (data as any).items : [],
         };
 
@@ -145,6 +162,7 @@ export const salesDataSource: DataSource<Sale> = {
                     total: data.total ?? s.total,
                     paymentMethod: data.paymentMethod ?? s.paymentMethod,
                     status: data.status ?? s.status,
+                    comprobante: data.comprobante ?? s.comprobante,
                     items,
                 };
                 return updated;
@@ -167,6 +185,7 @@ export const salesDataSource: DataSource<Sale> = {
         total: z.number().optional(),
         paymentMethod: z.enum(['efectivo', 'tarjeta', 'transferencia']).default('efectivo'),
         status: z.enum(['pendiente', 'completada', 'cancelada']).default('pendiente'),
+        comprobante: z.string().optional(),
         items: z
             .array(
                 z.object({

@@ -31,11 +31,29 @@ export const suppliesDataSource: DataSource<Supplies> = {
     { field: "id", headerName: "ID", width: 90 },
     { field: "nombre", headerName: "Nombre", width: 200 },
     { field: "cantidad", headerName: "Cantidad", type: "number", width: 120 },
-    { field: "unidad", headerName: "Unidad", width: 100 },
+    {
+      field: "unidad",
+      headerName: "Unidad",
+      width: 150,
+      type: "singleSelect",
+      valueOptions: ["kg", "unidades", "litros", "gr"],
+    },
   ],
 
-  getMany: async ({ paginationModel }) => {
-    const store = getSuppliesStore();
+  getMany: async ({ paginationModel, filterModel }) => {
+    let store = getSuppliesStore();
+
+    if (filterModel?.quickFilterValues?.length) {
+      const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+      store = store.filter((item) => {
+        return searchTerms.every((term) => {
+          return Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(term)
+          );
+        });
+      });
+    }
+
     const start = paginationModel.page * paginationModel.pageSize;
     const end = start + paginationModel.pageSize;
     return {
