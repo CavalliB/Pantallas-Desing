@@ -11,13 +11,38 @@ export interface Product extends DataModel {
   categoria: ProductCategory;
   stock: number;
   unidad: string; // 'unidades', 'kg', 'litros', etc.
+  receta: string;
 }
 
 // Datos iniciales
 const INITIAL_PRODUCTS_STORE: Product[] = [
-  { id: 1, nombre: 'Dulce de Leche', precio: 0, categoria: 'Helado', stock: 50, unidad: 'kg' },
-  { id: 2, nombre: 'ChocoChoco Torta', precio: 49, categoria: 'Postres', stock: 120, unidad: 'unidades' },
-  { id: 3, nombre: 'Cuchara', precio: 2, categoria: 'Otros', stock: 500, unidad: 'unidades' },
+  {
+    id: 1,
+    nombre: 'Dulce de Leche',
+    precio: 0,
+    categoria: 'Helado',
+    stock: 50,
+    unidad: 'kg',
+    receta: 'Leche, azúcar, bicarbonato de sodio, esencia de vainilla.',
+  },
+  {
+    id: 2,
+    nombre: 'ChocoChoco Torta',
+    precio: 49,
+    categoria: 'Postres',
+    stock: 120,
+    unidad: 'unidades',
+    receta: 'Galletitas de chocolate, dulce de leche, queso crema.',
+  },
+  {
+    id: 3,
+    nombre: 'Cuchara',
+    precio: 2,
+    categoria: 'Otros',
+    stock: 500,
+    unidad: 'unidades',
+    receta: '',
+  },
 ];
 
 // Persistencia en localStorage
@@ -47,8 +72,10 @@ export const productsDataSource: DataSource<Product> = {
       field: 'stock',
       headerName: 'Stock',
       type: 'number',
+      editable: false,
     },
     { field: 'unidad', headerName: 'Unidad', width: 100 },
+    { field: 'receta', headerName: 'Receta', width: 300 },
   ],
 
   getMany: async ({ paginationModel, filterModel, sortModel }) => {
@@ -113,7 +140,7 @@ export const productsDataSource: DataSource<Product> = {
 
   createOne: async (data) => {
     const productsStore = getProductsStore();
-    const { nombre, precio, categoria, stock, unidad } = data;
+    const { nombre, precio, categoria, stock, unidad, receta } = data;
 
     if (!nombre || precio == null || !categoria || stock == null || !unidad) {
       throw new Error('Todos los campos son obligatorios');
@@ -126,6 +153,7 @@ export const productsDataSource: DataSource<Product> = {
       categoria,
       stock,
       unidad,
+      receta: receta ?? '',
     };
     setProductsStore([...productsStore, newProduct]);
     return newProduct;
@@ -162,6 +190,7 @@ export const productsDataSource: DataSource<Product> = {
     }),
     stock: z.number().int().min(0, 'Debe haber al menos 0 en stock'),
     unidad: z.string().nonempty('Unidad es requerida'),
+    receta: z.string().optional(),
   })['~standard'].validate,
 };
 

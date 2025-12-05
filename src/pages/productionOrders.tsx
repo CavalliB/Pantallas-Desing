@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { Crud } from "@toolpad/core/Crud";
 import { useParams, useNavigate } from "react-router";
-import { Button } from "@mui/material";
+import { Button, Select, SelectProps, Typography, Alert } from "@mui/material";
 import BackButton from "../components/BackButton";
 import {
   PageContainer,
@@ -12,6 +13,34 @@ import {
   ProductionOrder,
   productionOrdersCache,
 } from "../data/productionOrders";
+import { getProductsStore } from "../data/products";
+
+function CustomSelect(props: SelectProps) {
+  const { value, name, children } = props;
+
+  const recipe = React.useMemo(() => {
+    // We strictly check name 'productId' as defined in dataSource
+    if (name === 'productId' && value) {
+      const p = getProductsStore().find((x) => x.id === Number(value));
+      return p?.receta;
+    }
+    return null;
+  }, [name, value]);
+
+  return (
+    <div>
+      <Select {...props} fullWidth>
+        {children}
+      </Select>
+      {recipe && (
+        <Alert severity="info" sx={{ mt: 1 }}>
+          <Typography variant="subtitle2" fontWeight="bold">Receta:</Typography>
+          <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{recipe}</Typography>
+        </Alert>
+      )}
+    </div>
+  );
+}
 
 export default function ProductionOrdersCrudPage() {
   const { orderId } = useParams();
@@ -54,6 +83,9 @@ export default function ProductionOrdersCrudPage() {
       }}
       slots={{
         pageContainer: CustomPageContainer, // usamos el PageContainer custom
+        form: {
+            select: CustomSelect,
+        }
       }}
     />
   );

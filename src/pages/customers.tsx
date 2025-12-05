@@ -32,7 +32,6 @@ export default function CustomersCrudPage() {
       dataSourceCache={customersCache}
       rootPath="/customers"
       initialPageSize={25}
-      defaultValues={{ itemCount: 1 }}
       pageTitles={{
         show: `Cliente ${customerId}`,
         create: 'Nuevo Cliente',

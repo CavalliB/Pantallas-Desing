@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Crud } from '@toolpad/core/Crud';
 import { useParams, useNavigate } from 'react-router';
-import { Button } from "@mui/material";
+import { Button, TextField, InputAdornment } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import { useGridApiRef } from '@mui/x-data-grid';
 import { productsDataSource, Product, productsCache } from '../data/products';
 import BackButton from '../components/BackButton';
 import {
@@ -13,6 +15,20 @@ import {
 export default function ProductsCrudPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
+    const apiRef = useGridApiRef();
+    const [searchText, setSearchText] = React.useState('');
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSearchText(value);
+        if (apiRef.current) {
+            apiRef.current.setFilterModel({
+                items: value
+                    ? [{ field: 'nombre', operator: 'contains', value }]
+                    : [],
+            });
+        }
+    };
 
     const handleModifyRecipe = () => {
         navigate("/recipes"); 
@@ -21,6 +37,24 @@ export default function ProductsCrudPage() {
     const CustomToolbar = () => (
         <PageHeaderToolbar>
             {productId && <BackButton to="/products" />}
+             {!productId && (
+                <TextField
+                    variant="outlined"
+                    size="small"
+                    placeholder="Buscar producto..."
+                    value={searchText}
+                    onChange={handleSearch}
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }
+                    }}
+                />
+            )}
             <Button
                 variant="contained"
                 color="primary"
@@ -58,6 +92,13 @@ export default function ProductsCrudPage() {
             }}
             slots={{
                 pageContainer: CustomPageContainer,
+            }}
+            slotProps={{
+                list: {
+                    dataGrid: {
+                        apiRef,
+                    }
+                }
             }}
         />
     );

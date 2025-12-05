@@ -9,12 +9,38 @@ export interface Supplier extends DataModel {
   role: SupplierRole;
   Email: string;
   cuit: string;
+  phone: string;
+  address: string;
 }
 
 const INITIAL_SUPPLIERS_STORE: Supplier[] = [
-  { id: 1, name: 'Edward Perry', role: 'producto', Email: 'hola@gmail.com', cuit: '20-12345678-9' },
-  { id: 2, name: 'Josephine Drake', role: 'insumos', Email: 'hola@gmail.com', cuit: '23-87654321-0' },
-  { id: 3, name: 'Cody Phillips', role: 'otros', Email: 'hola@gmail.com', cuit: '27-11223344-5' },
+  {
+    id: 1,
+    name: 'Edward Perry',
+    role: 'producto',
+    Email: 'hola@gmail.com',
+    cuit: '20-12345678-9',
+    phone: '555-1234',
+    address: 'Calle Falsa 123',
+  },
+  {
+    id: 2,
+    name: 'Josephine Drake',
+    role: 'insumos',
+    Email: 'hola@gmail.com',
+    cuit: '23-87654321-0',
+    phone: '555-5678',
+    address: 'Avenida Siempre Viva 742',
+  },
+  {
+    id: 3,
+    name: 'Cody Phillips',
+    role: 'otros',
+    Email: 'hola@gmail.com',
+    cuit: '27-11223344-5',
+    phone: '555-8765',
+    address: 'Boulevard de los Sueños Rotos',
+  },
 ];
 
 const getSuppliersStore = (): Supplier[] => {
@@ -39,6 +65,8 @@ export const suppliersDataSource: DataSource<Supplier> = {
     },
     { field: 'Email', headerName: 'Email', width: 200 },
     { field: 'cuit', headerName: 'CUIT', width: 160 },
+    { field: 'phone', headerName: 'Teléfono', width: 140 },
+    { field: 'address', headerName: 'Dirección', width: 200 },
   ],
 
   getMany: async ({ paginationModel }) => {
@@ -94,6 +122,8 @@ export const suppliersDataSource: DataSource<Supplier> = {
       cuit: z
         .string()
         .regex(/^\d{2}-\d{8}-\d{1}$/, 'CUIT debe tener formato XX-XXXXXXXX-X'),
+      phone: z.string().nonempty('Teléfono es obligatorio'),
+      address: z.string().nonempty('Dirección es obligatoria'),
     })['~standard'].validate,
 };
 
