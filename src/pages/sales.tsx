@@ -39,15 +39,21 @@ export default function SalesCrudPage() {
     const apiRef = useGridApiRef();
     const [searchText, setSearchText] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-    const [editData, setEditData] = React.useState<any>(null);
+    const [editData, setEditData] = React.useState<Sale | null>(null);
 
     React.useEffect(() => {
         if (saleId && saleId !== 'new') {
             setLoading(true);
-            salesDataSource.getOne(Number(saleId)).then((data) => {
-                setEditData(data);
-                setLoading(false);
-            }).catch(() => setLoading(false));
+            
+            // CORRECCIÓN APLICADA AQUÍ
+            // Usamos 'as Promise<Sale>' para asegurar el tipo de retorno antes del .then
+            (salesDataSource.getOne!(Number(saleId)) as Promise<Sale>)
+                .then((data) => {
+                    setEditData(data);
+                    setLoading(false);
+                })
+                .catch(() => setLoading(false));
+                
         } else {
             setEditData(null);
         }
@@ -71,7 +77,7 @@ export default function SalesCrudPage() {
     const contextValue = React.useMemo(() => ({
         searchText,
         handleSearch,
-        placeholder: "Buscar por cliente...",
+        placeholder: "Buscar por comprobante...",
         children: (
             <>
                 {saleId ? <BackButton to="/sales" /> : (
@@ -85,9 +91,9 @@ export default function SalesCrudPage() {
 
     const handleSubmit = async (data: any) => {
         if (saleId && saleId !== 'new') {
-            await salesDataSource.updateOne(Number(saleId), data);
+            await salesDataSource.updateOne!(Number(saleId), data);
         } else {
-            await salesDataSource.createOne(data);
+            await salesDataSource.createOne!(data);
         }
         navigate('/sales');
     };
