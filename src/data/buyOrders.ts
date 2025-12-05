@@ -85,8 +85,19 @@ export const buyOrdersDataSource: DataSource<BuyOrder> = {
 
     ],
 
-    getMany: async ({ paginationModel }) => {
-        const store = getBuyOrdersStore();
+    getMany: async ({ paginationModel, filterModel }) => {
+        let store = getBuyOrdersStore();
+
+        if (filterModel?.quickFilterValues?.length) {
+            const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+            store = store.filter((item) => {
+                return searchTerms.every((term) => {
+                    return Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(term)
+                    );
+                });
+            });
+        }
 
         const start = paginationModel.page * paginationModel.pageSize;
         const end = start + paginationModel.pageSize;

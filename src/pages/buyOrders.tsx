@@ -16,17 +16,49 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { useGridApiRef } from '@mui/x-data-grid';
 import { buyOrdersDataSource, BuyOrder, buyOrderCache } from "../data/buyOrders";
 import BackButton from "../components/BackButton";
+import SearchToolbar from "../components/SearchToolbar";
 import {
     PageContainer,
     PageHeader,
-    PageHeaderToolbar,
 } from '@toolpad/core/PageContainer';
+import { SearchContext, useSearchContext } from '../context/SearchContext';
+
+const CustomToolbar = () => {
+    const { searchText, handleSearch, placeholder, children } = useSearchContext();
+    return (
+        <SearchToolbar value={searchText} onChange={handleSearch} placeholder={placeholder}>
+            {children}
+        </SearchToolbar>
+    );
+};
+
+const CustomPageHeader = (headerProps: any) => {
+    return <PageHeader {...headerProps} slots={{ toolbar: CustomToolbar }} />;
+};
+
+const CustomPageContainer = (props: any) => {
+    return <PageContainer {...props} slots={{ header: CustomPageHeader }} />;
+};
 
 export default function BuyOrdersCrudPage() {
     const { buyOrdersId } = useParams();
     const location = useLocation();
+    const apiRef = useGridApiRef();
+    const [searchText, setSearchText] = React.useState('');
+
+    const handleSearch = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSearchText(value);
+        if (apiRef.current) {
+            apiRef.current.setFilterModel({
+                items: [],
+                quickFilterValues: value ? [value] : [],
+            });
+        }
+    }, [apiRef]);
 
     const currentId = buyOrdersId ?? (() => {
         const m = location.pathname.match(/\/buyOrders\/(\d+)/);
@@ -103,23 +135,15 @@ export default function BuyOrdersCrudPage() {
         }
     };
 
-    const CustomToolbar = () => (
-        <PageHeaderToolbar>
-            {currentId && <BackButton to="/buyOrders" />}
-            
-        </PageHeaderToolbar>
-    );
-
-    const CustomPageHeader = (headerProps: any) => {
-        return <PageHeader {...headerProps} slots={{ toolbar: CustomToolbar }} />;
-    };
-
-    const CustomPageContainer = (props: any) => {
-        return <PageContainer {...props} slots={{ header: CustomPageHeader }} />;
-    };
+    const contextValue = React.useMemo(() => ({
+        searchText,
+        handleSearch,
+        placeholder: "Buscar orden de compra...",
+        children: currentId && <BackButton to="/buyOrders" />
+    }), [searchText, handleSearch, currentId]);
 
     return (
-        <>
+        <SearchContext.Provider value={contextValue}>
             <Crud<BuyOrder>
                 dataSource={buyOrdersDataSource}
                 dataSourceCache={buyOrderCache}
@@ -138,6 +162,13 @@ export default function BuyOrdersCrudPage() {
                 }}
                 slots={{
                     pageContainer: CustomPageContainer,
+                }}
+                slotProps={{
+                    list: {
+                        dataGrid: {
+                            apiRef,
+                        }
+                    }
                 }}
             />
 
@@ -222,6 +253,6 @@ export default function BuyOrdersCrudPage() {
                     </Table>
                 </Paper>
             )}
-        </>
+        </SearchContext.Provider>
     );
 }

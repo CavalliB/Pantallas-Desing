@@ -1,6 +1,7 @@
 import { DataModel, DataSource, DataSourceCache } from "@toolpad/core/Crud";
 import { z } from "zod";
 import { getProductsStore } from "./products";
+import { getRecipesStore } from "./recipes";
 
 export interface ProductionOrder extends DataModel {
   id: number;
@@ -37,9 +38,34 @@ const setOrdersStore = (value: ProductionOrder[]) => {
 export const productionOrderDataSource: DataSource<ProductionOrder> = {
   fields: [
     { field: "id", headerName: "ID", width: 90 },
-    { field: "productId", headerName: "Producto ID", type: "number", width: 120 },
+    {
+      field: "productId",
+      headerName: "Producto",
+      type: "singleSelect",
+      valueOptions: getProductsStore()
+        .filter((p) => p.categoria === 'Helado')
+        .map((p) => ({ value: p.id, label: `${p.id} - ${p.nombre}` })),
+      width: 150,
+    },
     { field: "cantidad", headerName: "Cantidad", type: "number", width: 120 },
     { field: "categoria", headerName: "Categoria", width: 140 },
+    {
+      field: "recetaInfo",
+      headerName: "Receta del Producto",
+      width: 300,
+      editable: false,
+      valueGetter: (value, row) => {
+        // Handle potential different signatures or missing row
+        const actualRow = row || (value && typeof value === 'object' && 'row' in value ? value.row : null);
+
+        if (!actualRow) return "";
+        const product = getProductsStore().find((p) => p.id === Number(actualRow.productId));
+        if (!product || !product.recipeId) return "";
+
+        const recipe = getRecipesStore().find((r) => r.id === product.recipeId);
+        return recipe ? `${recipe.nombre}: ${recipe.ingredientes || recipe.descripcion}` : "";
+      },
+    },
     {
       field: "status",
       headerName: "Status",
@@ -58,8 +84,20 @@ export const productionOrderDataSource: DataSource<ProductionOrder> = {
     },
   ],
 
-  getMany: async ({ paginationModel }) => {
-    const ordersStore = getOrdersStore();
+  getMany: async ({ paginationModel, filterModel }) => {
+    let ordersStore = getOrdersStore();
+
+    if (filterModel?.quickFilterValues?.length) {
+      const searchTerms = filterModel.quickFilterValues.map((term) => String(term).toLowerCase());
+      ordersStore = ordersStore.filter((item) => {
+        return searchTerms.every((term) => {
+          return Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(term)
+          );
+        });
+      });
+    }
+
     const start = paginationModel.page * paginationModel.pageSize;
     const end = start + paginationModel.pageSize;
     const paginatedOrders = ordersStore.slice(start, end);
